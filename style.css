@@ -1,1 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
 
+body{
+  background-color: #F5F1E9;
+}
+#calendar{
+  margin-left: auto;
+  margin-right: auto;
+  width: 320px;
+  font-family: 'Nunito', Nunito;
+}
+#calendar_weekdays div{
+  display:inline-block;
+  vertical-align:top;
+}
+#calendar_content, #calendar_weekdays, #calendar_header{
+  position: relative;
+  width: 320px;
+  overflow: hidden;
+  float: left;
+  z-index: 10;
+  background-color: #fff;
+}
+#calendar_weekdays div, #calendar_content div{
+  width:40px;
+  height: 40px;
+  overflow: hidden;
+  text-align: center;
+  background-color: #fff;
+  color: black;
+}
+#calendar_content{
+  -webkit-border-radius: 0px 0px 12px 12px;
+  -moz-border-radius: 0px 0px 12px 12px; 
+  border-radius: 0px 0px 12px 12px;
+}
+#calendar_content div{
+  float: left;
+  
+}
+#calendar_content div:hover{
+  background-color: #ffcc00;
+  border-radius: 10px;
+}
+#calendar_content div.blank{
+  background-color: #;
+  border-radius: 10px;
+}
+#calendar_header, #calendar_content div.today{
+  zoom: 1;
+  filter: alpha(opacity=70);
+  opacity: 0.7;
+  background-color: #ffcc00;
+  border-radius: 10px;
+}
+#calendar_content div.today{
+  color: #FFFFFF;
+  
+}
+#calendar_header{
+  width: 100%;
+  height: 37px;
+  text-align: center;
+  background-color: #FFcc00;
+  padding: 18px 0;
+  -webkit-border-radius: 12px 12px 0px 0px;
+  -moz-border-radius: 12px 12px 0px 0px; 
+  border-radius: 12px 12px 0px 0px;
+}
+#calendar_header h1{
+  font-size: 1.5em;
+  color: #FFFFFF;
+  float:left;
+  width:70%;
+  background-color: #ffcc00;
+}
+i[class^=icon-chevron]{
+  color: #FFFFFF;
+  float: left;
+  width:15%;
+  border-radius: 50%;
+}
