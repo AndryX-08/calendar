@@ -1,131 +1,222 @@
-/* Submit on Enter */
-$("#addNewItemInput").on("keydown", (e) => {
-  if (e.keyCode === 13) {
-    $("#addNewItemBtn").click()
-    $("#addNewItemInput").val("")
-  }
-})
+/* Tools for Build this project  
+ - 1) MODULE DESIGN PATTERN (Ref. MVC)
+ - 2) ES5 Javacript (Old Ver.)
+ - 3) Event Delegation , Event Bubbling 
+ - 4) Function Constructor, New Instance
+*/
 
-$("#titleInput").on("keydown", (e) => {
-  if (e.keyCode == 13) {
-    $("#titleInput").blur();
-  }
-})
+// ----------View Module ----------
+// Concept : Input Value from UI, Update UI
+var UIController = function(){
 
-/* Add a new item */
-$("#addNewItemBtn").on("click", (e) => {
-  if ($("#addNewItemInput").val() == "") {
-    gsap.to("#addNewItemInput", .1, {x: -4})
-    gsap.to("#addNewItemInput", .1, {delay: .1, x: 4})
-    gsap.to("#addNewItemInput", .1, {delay: .2, x: -4})
-    gsap.to("#addNewItemInput", .1, {delay: .3, x: 4})
-    gsap.to("#addNewItemInput", .1, {delay: .4, x: 0})
-  } else {
-    const newItemInput = $("#addNewItemInput").val()
-  
-  $(".item").append(
-    `<div class="itemInner">
-      <i class="far fa-hand-point-right"></i>
-      <p>${newItemInput}</p>
-      <button class="removeItemBtn">
-       <i class="fas fa-trash-alt"></i>
-      </button>
-     </div>`)
-  
-  $("#addNewItemInput").val("")
-  
-  const newItem = e.target
+    var DOMString = {
+        day: '.date--day',
+        month: '.date--month',
+        year: '.date--year',
+        addInput: '.add__input',
+        addBtn: '.add__circle',
+        taskListContainer: '.result__list',
+        listTask: '.list__task',
+        checkedBtn: '.list__task--check',
+        taskText: '.list__task--text',
+        editBtn: '.list__task--edit',
+        delBtn: '.list__task--del'
+    }
 
-  gsap.to(".itemsWrapper, .item", .3, {paddingBottom: 30, ease: Back.easeOut})
-  gsap.to(".itemsWrapper, .item", .3, {delay: .15, paddingBottom: 8, y: 0, ease: Back.easeOut})
-  }
-})
+    return{
+        testUI: function(){
+            console.log('Call from UI');
+        },
+        
+        getDOMString: function(){
+            return DOMString;
+        },
 
-/* Completed item line through */
-$(".item").on("click", "i.fa-hand-point-right", (e) => {
-  const handPoint = e.target
-  const completedItem = e.target.parentElement
-  const text = completedItem.getElementsByTagName('p')
-  
-  $(text).css({"text-decoration": "line-through"})
-  gsap.to(handPoint, .3, {rotate: -30, transformOrigin: "center", ease: Back.easeOut})
-  gsap.to(handPoint, .3, {delay: .15, rotate: 0, transformOrigin: "center", ease: Back.easeOut})
-})
+        getInput: function(){
+            return document.querySelector(DOMString.addInput).value;
+        },
 
-/* Remove item */
-$(".item").on("click", "button.removeItemBtn", (e) => {
-    const removeItem = e.target
-    const itemInner = removeItem.parentElement    
-    $(itemInner).remove()
-  
-  gsap.to(".itemsWrapper, .item", 0, {paddingBottom: 52})
-  gsap.to(".itemsWrapper, .item", .3, {paddingBottom: 8, ease: Back.easeOut})
-})
+        clearInput: function(){
+            return document.querySelector(DOMString.addInput).value = "";
+        },
+        addTaskList: function(tasks){
 
-/* Edit list title animation */
-gsap.set(".fa-pencil-alt", {opacity: 0, rotate: -180, transformOrigin: "center"})
-gsap.set("#titleInput, #addNewItemInput", {border: "1px solid transparent", boxShadow: "0 0 0 rgba(211, 220, 248, .3)"})
+            var html, markup, element;
+        
+            //Create HTML string with placeholder text
+                element = DOMString.taskListContainer;
+                
+                html = '<li class="list__task" id="task-%id%"><button class="list__task--check" id="check"><i class="ion-ios-checkmark"></i></button><div class="list__task--text">%description%</div><button class="list__task--del" id="del"><i class="ion-android-delete"></i></button></li>';
+                
+            //replace the placeholder with some actual data
+                markup = html.replace('%id%', tasks.id);
+                markup = markup.replace('%description%', tasks.description);
 
-$("#titleInput").on("mouseenter", () => {
-    gsap.to(".fa-pencil-alt", .3, {rotate: 0, opacity: 1, transformOrigin: "center", ease: Back.easeOut})
-})
+            //Insert HTML into the DOM
+                document.querySelector(element).insertAdjacentHTML("afterbegin", markup);    
+        },
 
-$("#titleInput").on("mouseleave", () => {
-  if ($("#titleInput").is(":focus")) {
-    gsap.to(".fa-pencil-alt", .3, {rotate: 0, opacity: 1, transformOrigin: "center", ease: Back.easeOut})
-  } else if (!($("#titleInput").is(":focus"))) {
-    gsap.to(".fa-pencil-alt", .3, {rotate: -180, opacity: 0, transformOrigin: "center", ease: Back.easeOut})
-  }
-})
+        checkedTaskList: function(id){
+            // Goal : I need to toggle many class in a Element but Ref by Element.id --> (#task-0)
+            var taskID = "task-"+id;
 
-$("#titleInput").on("focus", () => {
-  gsap.to(".fa-pencil-alt", .3, {rotate: 0, opacity: 1, transformOrigin: "center", ease: Back.easeOut})
-  gsap.to("#titleInput", .3, {border: "1px solid #e7ecfb", boxShadow: "0 0 12px rgba(211, 220, 248, .3)"})
-})
+            var el = document.querySelectorAll(DOMString.listTask);
 
-$("#titleInput").on("focusout", () => {
-  gsap.to(".fa-pencil-alt", .3, {rotate: -180, opacity: 0, transformOrigin: "center", ease: Back.easeOut})
-  gsap.to("#titleInput", .3, {border: "1px solid transparent", boxShadow: "0 0 12px rgba(211, 220, 248, 0)"})
-})
+            for(var i = 0; i < el.length; i++){
 
-/* Trash fade on item hover */
-$(".item").on("mouseenter", ".itemInner", (e) => {
-  const trashBtn = $(e.target.querySelector(".removeItemBtn"))
-  gsap.to(trashBtn, .3, {opacity: 1})
-})
+                var listID = el[i].id;
 
-$(".itemInner").on("mouseenter", ".removeItemBtn", (e) => {
-  const trashBtn = e.target
-  gsap.to(trashBtn, .3, {opacity: 1})
-})
+                if(taskID === listID){
+                    //Object State 
+                    el[i].childNodes[0].classList.toggle('list__task--checked');
+                    el[i].childNodes[1].classList.toggle('list__task--text--checked');
+                }
+            }   
+        },
 
-$(".innerItem").on("mouseleave", ".removeItemBtn", (e) => {
-  gsap.to(trashBtn, .3, {opacity: 0})
-})
+        deleteTaskList: function(id){
+            var el = document.getElementById("task-"+id);
+            el.parentNode.removeChild(el);  
+        },
+        
+        displayMonth: function(){
+            var now ,month ,year ,months ;
 
-$(".item").on("mouseleave", ".itemInner", (e) => {
-  const trashBtn = $(e.target.querySelector(".removeItemBtn"))
-  gsap.to(trashBtn, .3, {opacity: 0})
-})
+            now = new Date;
 
-$(".itemInner").on("mouseleave", ".removeItemBtn", (e) => {
-  const trashBtn = e.target
-  gsap.to(trashBtn, .3, {opacity: 0})
-})
+            months = ["Gennaio", "Febbraio", "Marzo","Aprile",
+                        "Maggio","Giugno","Luglio","Agosto",
+                        "Settembre","Ottobre","Novembre","Decembre"];
 
-/* Add a new item animation */
-$("#addNewItemInput").on("focus", () => {
-  gsap.to("#addNewItemInput", .3, {border: "1px solid #e7ecfb", boxShadow: "0 0 12px rgba(211, 220, 248, .3)"})
-})
+            day = now.getDate();
+            month = now.getMonth();
+            year = now.getFullYear();
 
-$("#addNewItemInput").on("focusout", () => {
-  gsap.to("#addNewItemInput", .3, {border: "1px solid transparent", boxShadow: "0 0 12px rgba(211, 220, 248, 0)"})
-})
+            document.querySelector(DOMString.day).textContent = day;
+            document.querySelector(DOMString.month).textContent = months[month];
+            document.querySelector(DOMString.year).textContent =  year;
+        }
+    }
+}();
 
-$("#addNewItemBtn").on("mouseenter", () => {
-  gsap.to(".fa-plus", .3, {rotate: 90, ease: Back.easeOut})
-})
 
-$("#addNewItemBtn").on("mouseleave", () => {
-  gsap.to(".fa-plus", .3, {rotate: 0, ease: Back.easeOut})
-})
+// ---------- Model Module ----------
+// Concept: Create Formula, Calculate, Return Result
+var TodolistController = function(){
+    //Array Storage
+    var data = [];
+
+    //Task Instance for create new Item
+    var Task = function(id, description){
+        this.id = id,
+        this.description = description
+    }
+    
+    return{
+        testModel: function(){
+            console.log('Call from Model');
+        },
+
+        createNewTask:function(desc){
+            var addItem, ID;
+
+            if(data.length > 0){
+                for(var i = 0; i < data.length; i++){
+                    ID = i + 1;
+                    addItem = new Task(ID, desc);
+                }
+            }else{
+                ID = 0;
+                addItem = new Task(ID, desc);
+            }
+
+            data.push(addItem);
+
+            return addItem;
+        },
+
+        deleteTask: function(id){
+            var ids, index;
+            // Note : if you delete one of array, the index ref id will change
+            // you have to solve this problem
+            ids = data.map(function(current){
+                return current.id;
+            });
+
+            //Part Delete
+            index = ids.indexOf(parseInt(id));
+            if(index !== -1){
+                data.splice(index, 1);
+            }
+        }
+
+    }
+}();
+
+// ---------- Controll ----------
+// Concept : Parse Value, Check Event
+var MainController = function(TodoCtrl,UICtrl){
+    
+    var setupEventListener = function(){
+        var DOM = UICtrl.getDOMString();
+
+        //Add(1) : Click Button to Save
+        document.querySelector(DOM.addBtn).addEventListener('click', ctrlAdd);
+        //Add(2) : Press Enter to Save
+        document.querySelector(DOM.addInput).addEventListener('keypress', function(e){
+            if(e.keyCode == 13 || e.which === 13){
+                ctrlAdd();
+            }
+        });
+
+        document.querySelector(DOM.taskListContainer).addEventListener('click', ctrlEventCheck);
+    }
+
+    //----------------------------------------------------
+
+    var ctrlAdd = function(){
+        var item;
+        //1. Get value from input
+        item = UICtrl.getInput();
+        //2. Check Value
+        if(item !== "" && item !== " "){
+            //3. push value to array --> return tasks array
+            var tasks = TodoCtrl.createNewTask(item);
+            //4. update UI & clear input
+            UICtrl.addTaskList(tasks);
+            UICtrl.clearInput();
+        }
+    }
+
+    //----------------------------------------------------
+    //check ID from Event Delegation
+    var ctrlEventCheck = function(event){
+        var itemID, itemClass, IdSplit, ID;
+
+        itemID = event.target.parentNode.parentNode.id;
+        itemClass = event.target.parentNode.id;
+
+        IdSplit = itemID.split("-");
+
+        ID = IdSplit[1];
+        
+        if(itemClass === 'check'){
+            UICtrl.checkedTaskList(ID);
+        }else if(itemClass === 'del'){
+            TodoCtrl.deleteTask(ID);
+            UICtrl.deleteTaskList(ID);
+        };
+    }
+
+    //----------------------------------------------------
+    
+    return{
+        init: function(){
+            console.log('script.js : connecting..');
+            setupEventListener();
+            UICtrl.displayMonth();
+        }
+    }
+}(TodolistController,UIController);
+
+MainController.init();
